@@ -45,7 +45,7 @@ export async function enviarPedidoGrupoAllIn(pedido: PedidoSimulado) {
   }
 
   const baseUrl = apiUrl.startsWith("http") ? apiUrl : `https://${apiUrl}`;
-  const fullUrl = `${baseUrl}/message/sendText/${instance}`;
+  const fullUrl = `${baseUrl.replace(/\/$, "")}/message/sendText/${instance}`;
   
   // DEBUG TEMPORÁRIO
   console.log("[WhatsApp DEBUG] URL:", fullUrl);
