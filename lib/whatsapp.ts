@@ -40,13 +40,18 @@ export async function enviarPedidoGrupoAllIn(pedido: PedidoSimulado) {
   const grupoId = process.env.WHATSAPP_GRUPO_ALLIN_ID;
 
   if (!apiUrl || !apiKey || !instance || !grupoId) {
-    console.warn("[Demo] WhatsApp nao configurado. Pedido simulado confirmado sem envio.");
+    console.warn("[Pedido] WhatsApp nao configurado. Pedido confirmado sem envio.");
     return;
   }
 
   const baseUrl = apiUrl.startsWith("http") ? apiUrl : `https://${apiUrl}`;
+  const fullUrl = `${baseUrl}/message/sendText/${instance}`;
+  
+  // DEBUG TEMPORÁRIO
+  console.log("[WhatsApp DEBUG] URL:", fullUrl);
+  console.log("[WhatsApp DEBUG] GrupoId:", grupoId);
 
-  const response = await fetch(`${baseUrl}/message/sendText/${instance}`, {
+  const response = await fetch(fullUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -56,6 +61,9 @@ export async function enviarPedidoGrupoAllIn(pedido: PedidoSimulado) {
   });
 
   if (!response.ok) {
-    throw new Error(`Falha Evolution API: ${response.status}`);
+    const responseBody = await response.text().catch(() => "(sem corpo)");
+    console.error("[WhatsApp] Status:", response.status);
+    console.error("[WhatsApp] Corpo:", responseBody);
+    throw new Error(`Falha Evolution API: ${response.status} — ${responseBody}`);
   }
 }
